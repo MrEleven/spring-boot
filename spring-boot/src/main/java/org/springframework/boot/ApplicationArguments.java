@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Provides access to the arguments that were used to run a {@link SpringApplication}.
+ * 用于启动SpringApplication实例的参数
  *
  * @author Phillip Webb
  * @since 1.3.0

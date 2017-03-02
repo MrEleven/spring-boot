@@ -30,24 +30,23 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 
 /**
- * Class used by {@link SpringApplication} to print the application banner.
- *
+ * 没啥用，主要用来输出Banner，所谓Banner就是指Spring启动时候答应出的比较大的"Spring"字符串图形。
  * @author Phillip Webb
  */
 class SpringApplicationBannerPrinter {
-
+	/* banner地址的属性名称，如果banner打开banner的内容会从指定的地址读取 */
 	static final String BANNER_LOCATION_PROPERTY = "banner.location";
-
+    /* banner图片地址的属性名称 */
 	static final String BANNER_IMAGE_LOCATION_PROPERTY = "banner.image.location";
-
+    /* 默认的banner文件，banner的内容会从这个文件读取 */
 	static final String DEFAULT_BANNER_LOCATION = "banner.txt";
-
+    /* banner图形的扩展名 */
 	static final String[] IMAGE_EXTENSION = { "gif", "jpg", "png" };
 
 	private static final Banner DEFAULT_BANNER = new SpringBootBanner();
-
+    /* 主要用来加载Banner在文件系统中的资源 */
 	private final ResourceLoader resourceLoader;
-
+    /* 回退banner，不知道是干啥用的 */
 	private final Banner fallbackBanner;
 
 	SpringApplicationBannerPrinter(ResourceLoader resourceLoader, Banner fallbackBanner) {
@@ -55,6 +54,7 @@ class SpringApplicationBannerPrinter {
 		this.fallbackBanner = fallbackBanner;
 	}
 
+    /* 输出Banner到日志(logger) */
 	public Banner print(Environment environment, Class<?> sourceClass, Log logger) {
 		Banner banner = getBanner(environment, this.fallbackBanner);
 		try {
@@ -72,6 +72,14 @@ class SpringApplicationBannerPrinter {
 		return new PrintedBanner(banner, sourceClass);
 	}
 
+    /**
+     * 获取Banner，其实获取了两次，一次是图形Banner，一次是文本banner。
+     * 如果两种Banner都没有，则返回fallbackBanner。
+     * 如果连fallbackBanner都没有就返回默认Banner。
+     * @param environment
+     * @param definedBanner 打酱油的参数
+     * @return
+     */
 	private Banner getBanner(Environment environment, Banner definedBanner) {
 		Banners banners = new Banners();
 		banners.addIfNotNull(getImageBanner(environment));
@@ -85,6 +93,11 @@ class SpringApplicationBannerPrinter {
 		return DEFAULT_BANNER;
 	}
 
+    /**
+     * 获取文本Banner
+     * @param environment
+     * @return
+     */
 	private Banner getTextBanner(Environment environment) {
 		String location = environment.getProperty(BANNER_LOCATION_PROPERTY,
 				DEFAULT_BANNER_LOCATION);
@@ -95,6 +108,13 @@ class SpringApplicationBannerPrinter {
 		return null;
 	}
 
+    /**
+     * 获取图形Banner
+     * 先从启动参数找，如果有就加载。
+     * 如果没有启动参数，直接通过banner ＋ 预先设定的扩展名找。
+     * @param environment
+     * @return
+     */
 	private Banner getImageBanner(Environment environment) {
 		String location = environment.getProperty(BANNER_IMAGE_LOCATION_PROPERTY);
 		if (StringUtils.hasLength(location)) {
@@ -110,8 +130,14 @@ class SpringApplicationBannerPrinter {
 		return null;
 	}
 
+    /**
+     * 将Banner转化成一个字符串，如果是图片会包不支持的错误，这里面通过二进制输出流获取字符串的方式还是挺实用的。
+     * @return
+     * @throws UnsupportedEncodingException
+     */
 	private String createStringFromBanner(Banner banner, Environment environment,
 			Class<?> mainApplicationClass) throws UnsupportedEncodingException {
+        /* 定义一个二进制输出流 */
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		banner.printBanner(environment, mainApplicationClass, new PrintStream(baos));
 		String charset = environment.getProperty("banner.charset", "UTF-8");
@@ -119,7 +145,8 @@ class SpringApplicationBannerPrinter {
 	}
 
 	/**
-	 * {@link Banner} comprised of other {@link Banner Banners}.
+     * Banner组合，可以把多个Banner组合成一个Banner，输出的时候所有子Banner全部输出。厉害了，我的哥。
+     * 这里Junit4的Description也是用comprised of这个单词，看来一个类型实例嵌套同类型的另外一个实例就叫comprised of。
 	 */
 	private static class Banners implements Banner {
 
@@ -146,8 +173,8 @@ class SpringApplicationBannerPrinter {
 	}
 
 	/**
-	 * Decorator that allows a {@link Banner} to be printed again without needing to
-	 * specify the source class.
+     * 一个Banner的装饰器，其实就是保存了Banner和源码类。
+     * 按照原来的注释来说主要为了可以重复输出，而不需要重新制定资源类。感觉没啥意义。
 	 */
 	private static class PrintedBanner implements Banner {
 

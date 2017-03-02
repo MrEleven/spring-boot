@@ -26,7 +26,7 @@ import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.util.Assert;
 
 /**
- * Default implementation of {@link ApplicationArguments}.
+ * ApplicationArguments的默认实例，用于存储启动参数
  *
  * @author Phillip Webb
  * @since 1.4.1

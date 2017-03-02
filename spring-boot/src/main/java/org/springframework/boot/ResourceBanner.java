@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 
 /**
- * Banner implementation that prints from a source text {@link Resource}.
+ * 依赖资源的文本Banner。没啥实质性作用，完全是装逼用。
  *
  * @author Phillip Webb
  * @author Vedran Pavic

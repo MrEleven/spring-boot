@@ -7,6 +7,8 @@
 		<version>1.4.1.RELEASE</version>
 		<relativePath>../spring-boot-parent</relativePath>
 	</parent>
+    <version>1.4.1.RELEASE</version>
+    <groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot</artifactId>
 	<name>Spring Boot</name>
 	<description>Spring Boot</description>

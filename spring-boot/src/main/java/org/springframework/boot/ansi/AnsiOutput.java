@@ -19,8 +19,7 @@ package org.springframework.boot.ansi;
 import org.springframework.util.Assert;
 
 /**
- * Generates ANSI encoded output, automatically attempting to detect if the terminal
- * supports ANSI.
+ * 美国标准编码输出，自动发现终端是否支持标准编码。一般程序员不用关心这个，就不研究了。
  *
  * @author Phillip Webb
  */
@@ -44,7 +43,7 @@ public abstract class AnsiOutput {
 	private static final String RESET = "0;" + AnsiColor.DEFAULT;
 
 	/**
-	 * Sets if ANSI output is enabled.
+	 * 设置是否可用
 	 * @param enabled if ANSI is enabled, disabled or detected
 	 */
 	public static void setEnabled(Enabled enabled) {

@@ -22,49 +22,37 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 /**
- * Listener for the {@link SpringApplication} {@code run} method.
- * {@link SpringApplicationRunListener}s are loaded via the {@link SpringFactoriesLoader}
- * and should declare a public constructor that accepts a {@link SpringApplication}
- * instance and a {@code String[]} of arguments. A new
- * {@link SpringApplicationRunListener} instance will be created for each run.
- *
+ * 系统启动时候的监听器
  * @author Phillip Webb
  * @author Dave Syer
  */
 public interface SpringApplicationRunListener {
 
 	/**
-	 * Called immediately when the run method has first started. Can be used for very
-	 * early initialization.
+	 * 在Spring刚启动的时候调用。
 	 */
 	void started();
 
 	/**
-	 * Called once the environment has been prepared, but before the
-	 * {@link ApplicationContext} has been created.
+	 * 在环境准备完毕，但是在应用上下文还没有创建的时候回调用一次。
 	 * @param environment the environment
 	 */
 	void environmentPrepared(ConfigurableEnvironment environment);
 
 	/**
-	 * Called once the {@link ApplicationContext} has been created and prepared, but
-	 * before sources have been loaded.
+	 * 在应用上下文创建了，但还没有加载资源的时候调用一次。
 	 * @param context the application context
 	 */
 	void contextPrepared(ConfigurableApplicationContext context);
 
 	/**
-	 * Called once the application context has been loaded but before it has been
-	 * refreshed.
+	 * 在应用上下文加载了，但是还没有加载bean的时候。
 	 * @param context the application context
 	 */
 	void contextLoaded(ConfigurableApplicationContext context);
 
 	/**
-	 * Called immediately before the run method finishes.
-	 * @param context the application context or null if a failure occurred before the
-	 * context was created
-	 * @param exception any run exception or null if run completed successfully.
+	 * 在应用run方法完成之前执行一次。
 	 */
 	void finished(ConfigurableApplicationContext context, Throwable exception);
 

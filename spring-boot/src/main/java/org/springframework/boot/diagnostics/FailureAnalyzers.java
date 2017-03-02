@@ -70,6 +70,7 @@ public final class FailureAnalyzers {
 		prepareFailureAnalyzers(this.analyzers, context);
 	}
 
+	/* 加载spring.factories中的一些错误分析器 */
 	private List<FailureAnalyzer> loadFailureAnalyzers(ClassLoader classLoader) {
 		List<String> analyzerNames = SpringFactoriesLoader
 				.loadFactoryNames(FailureAnalyzer.class, classLoader);
@@ -96,6 +97,7 @@ public final class FailureAnalyzers {
 		}
 	}
 
+    /* 将错误分析器与上下文中的BeanFactory进行关联 */
 	private void prepareAnalyzer(ConfigurableApplicationContext context,
 			FailureAnalyzer analyzer) {
 		if (analyzer instanceof BeanFactoryAware) {
