@@ -32,6 +32,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.util.StringUtils;
 
 /**
+ * 大概的意思就是说这个初始化起其实是内嵌Servlet容器的初始化起，主要用来指内嵌Tomcat监听端口和管理端口等。
  * {@link ApplicationContextInitializer} that sets {@link Environment} properties for the
  * ports that {@link EmbeddedServletContainer} servers are actually listening on. The
  * property {@literal "local.server.port"} can be injected directly into tests using

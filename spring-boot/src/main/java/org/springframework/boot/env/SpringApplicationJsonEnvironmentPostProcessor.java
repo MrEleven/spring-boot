@@ -38,6 +38,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.StandardServletEnvironment;
 
 /**
+ * 貌似用Json做配置文件的时候，会用到这个类。这个类会把JSON添加到环境，并且作为一个PropertySource
  * An {@link EnvironmentPostProcessor} that parses JSON from
  * {@code spring.application.json} or equivalently {@code SPRING_APPLICATION_JSON} and
  * adds it as a map property source to the {@link Environment}. The new properties are

@@ -33,6 +33,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
+ * 代理 环境变量“context.initializer.classes” 代表的所有初始化器.
  * {@link ApplicationContextInitializer} that delegates to other initializers that are
  * specified under a {@literal context.initializer.classes} environment property.
  *
@@ -57,6 +58,7 @@ public class DelegatingApplicationContextInitializer implements
 		}
 	}
 
+    /* 获取环境变量 context.initializer.classes 指定的所有类 */
 	private List<Class<?>> getInitializerClasses(ConfigurableEnvironment env) {
 		String classNames = env.getProperty(PROPERTY_NAME);
 		List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -68,6 +70,7 @@ public class DelegatingApplicationContextInitializer implements
 		return classes;
 	}
 
+    /* 根据类名获取初始化器 */
 	private Class<?> getInitializerClass(String className) throws LinkageError {
 		try {
 			Class<?> initializerClass = ClassUtils.forName(className,
@@ -81,6 +84,7 @@ public class DelegatingApplicationContextInitializer implements
 		}
 	}
 
+    /* 根据类名实例化所有类，并按顺序调用初始化方法 */
 	private void applyInitializerClasses(ConfigurableApplicationContext context,
 			List<Class<?>> initializerClasses) {
 		Class<?> contextClass = context.getClass();
@@ -91,6 +95,7 @@ public class DelegatingApplicationContextInitializer implements
 		applyInitializers(context, initializers);
 	}
 
+    /* 根据类型，实例化初始化器 */
 	private ApplicationContextInitializer<?> instantiateInitializer(Class<?> contextClass,
 			Class<?> initializerClass) {
 		Class<?> requireContextClass = GenericTypeResolver.resolveTypeArgument(
@@ -107,6 +112,7 @@ public class DelegatingApplicationContextInitializer implements
 				.instantiateClass(initializerClass);
 	}
 
+    /* 按顺序调用initialize方法 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void applyInitializers(ConfigurableApplicationContext context,
 			List<ApplicationContextInitializer<?>> initializers) {

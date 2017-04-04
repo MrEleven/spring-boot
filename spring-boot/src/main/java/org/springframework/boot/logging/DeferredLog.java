@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * 这个比较牛逼，日志可以缓存起来，等到日志系统全部初始化再输出。
  * Deferred {@link Log} that can be used to store messages that shouldn't be written until
  * the logging system is fully initialized.
  *

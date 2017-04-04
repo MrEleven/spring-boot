@@ -43,8 +43,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * {@link ApplicationContextInitializer} to report warnings for common misconfiguration
- * mistakes.
+ * 初始化起，主要用来报告错误的配置信息
  *
  * @author Phillip Webb
  * @since 1.2.0

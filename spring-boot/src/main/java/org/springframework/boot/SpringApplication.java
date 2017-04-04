@@ -172,11 +172,11 @@ public class SpringApplication {
 
 	private static final Log logger = LogFactory.getLog(SpringApplication.class);
 
-    /* 保存传进来的source，虽然目前不知道source干嘛的 */
+    /* 保存传进来的应用启动类，虽然目前不知道source干嘛的 */
 	private final Set<Object> sources = new LinkedHashSet<Object>();
     /* 启动类 */
 	private Class<?> mainApplicationClass;
-    /* 默认将Banner输出到控制台 */
+
 	private Banner.Mode bannerMode = Banner.Mode.CONSOLE;
 
 	private boolean logStartupInfo = true;
@@ -201,7 +201,7 @@ public class SpringApplication {
 	private boolean headless = true;
     /* 默认启用Shutdown的钩子 */
 	private boolean registerShutdownHook = true;
-    /* 初始化起集合 */
+    /* 初始化器列表 */
 	private List<ApplicationContextInitializer<?>> initializers;
     /* 应用监听器集合 */
 	private List<ApplicationListener<?>> listeners;
@@ -225,6 +225,10 @@ public class SpringApplication {
 		initialize(sources);
 	}
 
+    /**
+     * 主要是加载初始化起和监听器
+     * @param sources
+     */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initialize(Object[] sources) {
 		if (sources != null && sources.length > 0) {
@@ -267,7 +271,7 @@ public class SpringApplication {
 	}
 
 	/**
-	 * 启动一个Spring应用。创建并刷新上下文
+	 * 启动一个Spring应用上下文。创建并刷新上下文
 	 * @param args the application arguments (usually passed from a Java main method)
 	 * @return a running {@link ApplicationContext}
 	 */
@@ -278,7 +282,7 @@ public class SpringApplication {
 		FailureAnalyzers analyzers = null;
         // 将系统是否是headless模式配置进系统环境变量
 		configureHeadlessProperty();
-        // 获取监听器
+        // 获取启动监听器，仅仅在run方法中有效。主要是为了在执行run方法的时候能给开发人员留钩子
 		SpringApplicationRunListeners listeners = getRunListeners(args);
 		listeners.started();
 		try {
@@ -319,7 +323,7 @@ public class SpringApplication {
 	}
 
     /**
-     * 创建环境信息，所谓的环境就是指profile和properties
+     * 创建环境信息，所谓的环境就是指profile和propertieSource
      * @param listeners
      * @param applicationArguments
      * @return
@@ -331,6 +335,7 @@ public class SpringApplication {
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
 		listeners.environmentPrepared(environment);
+        // 如果当enviroment是web环境，并且实际不是web环境，就将web环境转化成标准环境
 		if (isWebEnvironment(environment) && !this.webEnvironment) {
 			environment = convertToStandardEnvironment(environment);
 		}
@@ -413,7 +418,6 @@ public class SpringApplication {
      */
 	private <T> Collection<? extends T> getSpringFactoriesInstances(Class<T> type,
 			Class<?>[] parameterTypes, Object... args) {
-        // 获取当前线程的类加载器
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		// Use names and ensure unique to protect against duplicates
 		Set<String> names = new LinkedHashSet<String>(
@@ -456,6 +460,7 @@ public class SpringApplication {
 		return instances;
 	}
 
+	/* 返回当前环境对象，如果没有就创建一个 */
 	private ConfigurableEnvironment getOrCreateEnvironment() {
 		if (this.environment != null) {
 			return this.environment;
@@ -467,6 +472,7 @@ public class SpringApplication {
 	}
 
 	/**
+     * 配置附加属性信息和Profiles
 	 * Template method delegating to
 	 * {@link #configurePropertySources(ConfigurableEnvironment, String[])} and
 	 * {@link #configureProfiles(ConfigurableEnvironment, String[])} in that order.
@@ -494,12 +500,14 @@ public class SpringApplication {
 		}
 	}
 
+    /* 将web环境转化成标准环境：过滤一些Servlet环境特有的PropertySource。web环境＝Servlet环境 */
 	private ConfigurableEnvironment convertToStandardEnvironment(
 			ConfigurableEnvironment environment) {
 		StandardEnvironment result = new StandardEnvironment();
 		removeAllPropertySources(result.getPropertySources());
 		result.setActiveProfiles(environment.getActiveProfiles());
 		for (PropertySource<?> propertySource : environment.getPropertySources()) {
+            // 过滤Servlet环境中特有的propertySource。
 			if (!SERVLET_ENVIRONMENT_SOURCE_NAMES.contains(propertySource.getName())) {
 				result.getPropertySources().addLast(propertySource);
 			}
@@ -507,6 +515,7 @@ public class SpringApplication {
 		return result;
 	}
 
+    /* 移除所有子PropertySource对象 */
 	private void removeAllPropertySources(MutablePropertySources propertySources) {
 		Set<String> names = new HashSet<String>();
 		for (PropertySource<?> propertySource : propertySources) {
@@ -518,6 +527,7 @@ public class SpringApplication {
 	}
 
 	/**
+	 * 配置属性源，将命令行，默认属性，跟环境对象进行关联
 	 * Add, remove or re-order any {@link PropertySource}s in this application's
 	 * environment.
 	 * @param environment this application's environment
@@ -548,6 +558,7 @@ public class SpringApplication {
 	}
 
 	/**
+     * 配置profiles信息到环境对象中
 	 * Configure which profiles are active (or active by default) for this application
 	 * environment. Additional profiles may be activated during configuration file
 	 * processing via the {@code spring.profiles.active} property.

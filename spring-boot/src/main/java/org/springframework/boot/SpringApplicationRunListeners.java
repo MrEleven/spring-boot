@@ -27,7 +27,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * A collection of {@link SpringApplicationRunListener}.
+ * 包含了一个列表的SpringApplicationRunListener的代理类，通过它将事件分发出去。
+ * 实际上它也实现了SpringApplicationRunListener的所有接口。
  *
  * @author Phillip Webb
  */

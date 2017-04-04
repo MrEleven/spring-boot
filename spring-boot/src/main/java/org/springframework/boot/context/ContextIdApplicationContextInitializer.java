@@ -24,6 +24,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.StringUtils;
 
 /**
+ * ApplicationContext的Id到底有啥用？
+ *
  * {@link ApplicationContextInitializer} that set the Spring
  * {@link ApplicationContext#getId() ApplicationContext ID}. The following environment
  * properties will be consulted to create the ID:

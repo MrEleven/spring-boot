@@ -40,6 +40,7 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.util.StringUtils;
 
 /**
+ * 加载CloudFoundry的配置。暂时用不到，先不了解。
  * An {@link EnvironmentPostProcessor} that knows where to find VCAP (a.k.a. Cloud
  * Foundry) meta data in the existing environment. It parses out the VCAP_APPLICATION and
  * VCAP_SERVICES meta data and dumps it in a form that is easily consumed by

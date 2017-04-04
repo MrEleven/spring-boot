@@ -65,6 +65,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 
 /**
+ * 这个类主要是用来从文件中加载属性用的，默认的文件地址是application.properties活着application.yml
  * {@link EnvironmentPostProcessor} that configures the context environment by loading
  * properties from well known file locations. By default properties will be loaded from
  * 'application.properties' and/or 'application.yml' files in the following locations:
@@ -75,17 +76,21 @@ import org.springframework.validation.BindException;
  * <li>file:./config/:</li>
  * </ul>
  * <p>
+ * 可以指定搜索路径和名称。方法是setSearchLocations(String)和setSearchNames(String)
  * Alternative search locations and names can be specified using
  * {@link #setSearchLocations(String)} and {@link #setSearchNames(String)}.
  * <p>
+ * 另外文件加载是基于活跃profiles来加载的。比如，profile 'web'是活跃的，我们就会加载application-web.properties或者application-web.yml
  * Additional files will also be loaded based on active profiles. For example if a 'web'
  * profile is active 'application-web.properties' and 'application-web.yml' will be
  * considered.
  * <p>
+ * 'spring.config.name' 属性可以用来指定加载名称，'spring.config.location'可以用来指定加载位置。
  * The 'spring.config.name' property can be used to specify an alternative name to load
  * and the 'spring.config.location' property can be used to specify alternative search
  * locations or specific files.
  * <p>
+ * 可配置的属性也和SpringApplication绑定，这使得我们可以动态指定SpringApplication的属性。
  * Configuration properties are also bound to the {@link SpringApplication}. This makes it
  * possible to set {@link SpringApplication} properties dynamically, like the sources
  * ("spring.main.sources" - a CSV list) the flag to indicate a web environment
@@ -103,6 +108,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor,
 
 	private static final String DEFAULT_PROPERTIES = "defaultProperties";
 
+    // 最后一个加载的会覆盖恰面加载的。
 	// Note the order is from least to most specific (last one wins)
 	private static final String DEFAULT_SEARCH_LOCATIONS = "classpath:/,classpath:/config/,file:./,file:./config/";
 
@@ -148,6 +154,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor,
 
 	private final ConversionService conversionService = new DefaultConversionService();
 
+    /* 系统时间回调接口，只响应两个事件，环境准备完成，Bean加载完但还么有Refresh的时候 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		if (event instanceof ApplicationEnvironmentPreparedEvent) {
@@ -159,6 +166,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor,
 		}
 	}
 
+    /* 环境对象准备完毕的回调方法，我跟踪了一下，默认的Processors没有做什么 */
 	private void onApplicationEnvironmentPreparedEvent(
 			ApplicationEnvironmentPreparedEvent event) {
 		List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
@@ -170,6 +178,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor,
 		}
 	}
 
+    /* 从spring.factories中加载EnvironmentPostProcessor 处理器 */
 	List<EnvironmentPostProcessor> loadPostProcessors() {
 		return SpringFactoriesLoader.loadFactories(EnvironmentPostProcessor.class,
 				getClass().getClassLoader());
